@@ -3,7 +3,7 @@ import numpy as np
 import tqdm
 
 sliceNumber = 1000
-epsilon = 4*pi / sliceNumber
+epsilon = 2*pi / sliceNumber
 
 tr = 60
 t0=45
@@ -52,11 +52,21 @@ def H(kx, ky):
     ans = np.array([[h11,h12,h13,h14],[h21,h22,h23,h24],[h31,h32,h33,h34],[h41,h42,h43,h44]])
     return ans
 
+Hlib = []
+for x in range(0,sliceNumber):
+    Htmp = []
+    for y in range(0,sliceNumber):
+        kx = 2*pi*x/sliceNumber
+        ky = 2*pi*y/sliceNumber
+        
+        Htmp.append(H(kx,ky))
+    Hlib.append(Htmp)
+ 
 def W(n, kx, ky):
-    H1 = H(kx, ky)
+    H1 = Hlib(kx, ky)
     Msize = int(sqrt(H1.size))
-    H1x = H(kx+epsilon, ky)
-    H1y = H(kx, ky+epsilon)
+    H1x = Hlib(kx+epsilon, ky)
+    H1y = Hlib(kx, ky+epsilon)
     dHdx = (H1x - H1) / epsilon
     dHdy = (H1y - H1) / epsilon
     E = np.linalg.eig(H1)
@@ -126,12 +136,12 @@ print("Evec size ",tmp)
 W2 = []
 W3 = []
 #W4 = []
-for y in tqdm.tqdm(range(-sliceNumber,sliceNumber)):
+for y in tqdm.tqdm(range(sliceNumber)):
     #W1r = []
     W2r = []
     W3r = []
     #W4r = []
-    for x in range(-sliceNumber,sliceNumber):
+    for x in range(sliceNumber):
         kx = 2*pi*x/sliceNumber
         ky = 2*pi*y/sliceNumber
         #W1r.append(W(1,kx,ky))
